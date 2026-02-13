@@ -112,8 +112,8 @@ function handleTrophyCollision(scene) {
     trophyCount++;
     trophyCountDisplay.setText(`Trophies: ${trophyCount}`);
     
-    // Grow the blob by 1.1x
-    const newScale = player.scale * 1.1;
+    // Grow the blob by 1.2x
+    const newScale = player.scale * 1.2;
     player.setScale(newScale);
     
     // Mark trophy as collected and flag for audio speed increase when touching ground
@@ -182,7 +182,7 @@ function create() {
             trophyCollected = false;
             // Increase audio speed if trophy was just collected
             if (trophyJustCollected) {
-                const newRate = backgroundMusic.rate * 1.1;
+                const newRate = backgroundMusic.rate * 1.2;
                 backgroundMusic.setRate(newRate);
                 trophyJustCollected = false;
             }
