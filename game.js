@@ -32,6 +32,7 @@ let leftEye;
 let rightEye;
 let trophyCount = 0;
 let trophyCountDisplay;
+let backgroundMusic;
 
 function preload() {
     // Assets are created dynamically in create()
@@ -169,7 +170,14 @@ function create() {
     trophyCountDisplay.setDepth(100);
 
     // Play background music on loop
-    this.sound.play('theme', { loop: true, volume: 0.5 });
+    backgroundMusic = this.sound.play('theme', { loop: true, volume: 0.5 });
+
+    // Setup volume slider control
+    const volumeSlider = document.getElementById('volume-slider');
+    volumeSlider.addEventListener('input', (e) => {
+        const volume = e.target.value / 100;
+        backgroundMusic.setVolume(volume);
+    });
 
     // Handle collisions with platforms and reset double-jump on ground contact
     this.physics.add.collider(player, platforms, () => {

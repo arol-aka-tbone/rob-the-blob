@@ -35,12 +35,41 @@
             padding: 8px 12px;
             border-radius: 4px;
         }
+        #volume-control {
+            position: absolute;
+            top: 70px;
+            right: 20px;
+            color: #333;
+            font-size: 14px;
+            font-weight: bold;
+            z-index: 10;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 8px 12px;
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            align-items: flex-end;
+        }
+        #volume-control label {
+            margin: 0;
+            display: block;
+        }
+        #volume-slider {
+            width: 120px;
+            height: 5px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
     <div id="game-container">
         <div id="info">
             <p>← → Move | Spacebar Jump</p>
+        </div>
+        <div id="volume-control">
+            <label for="volume-slider">Volume</label>
+            <input type="range" id="volume-slider" min="0" max="100" value="50">
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.js"></script>
