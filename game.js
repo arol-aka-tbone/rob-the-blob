@@ -28,9 +28,68 @@ let colorInverted = false;
 let trophyCollected = false;
 let trophyX = 60;
 let trophyY = 200;
+let leftEye;
+let rightEye;
 
 function preload() {
     // Assets are created dynamically in create()
+}
+
+function createBlobFace(scene, blob) {
+    // Create left eye (open)
+    leftEye = scene.add.circle(blob.x - 7, blob.y - 5, 3, 0x000000);
+    // Create right eye (open)
+    rightEye = scene.add.circle(blob.x + 7, blob.y - 5, 3, 0x000000);
+    
+    // Create mouth (smile)
+    const mouth = scene.add.arc(blob.x, blob.y + 5, 8, 3.5, 5.8, false, 0x000000);
+    
+    // Store references on blob object
+    blob.face = { leftEye, rightEye, mouth };
+    blob.isJumping = false;
+}
+
+function updateBlobFace(blob) {
+    // Check if jumping
+    const wasJumping = blob.isJumping;
+    blob.isJumping = !blob.body.touching.down;
+    
+    // Update eye appearance based on jump state
+    if (blob.isJumping) {
+        // Closed eyes (lines)
+        blob.face.leftEye.clear();
+        blob.face.rightEye.clear();
+        
+        const graphics = blob.scene.make.graphics({ x: 0, y: 0 });
+        graphics.lineStyle(2, 0x000000);
+        
+        // Left eye line
+        graphics.lineBetween(blob.x - 10, blob.y - 5, blob.x - 4, blob.y - 5);
+        // Right eye line
+        graphics.lineBetween(blob.x + 4, blob.y - 5, blob.x + 10, blob.y - 5);
+        
+        if (!blob.face.closedEyes) {
+            blob.face.closedEyes = graphics;
+        }
+    } else {
+        // Open eyes (circles)
+        if (blob.face.closedEyes) {
+            blob.face.closedEyes.destroy();
+            blob.face.closedEyes = null;
+        }
+        
+        // Recreate eyes as circles
+        blob.face.leftEye.setFillStyle(0x000000);
+        blob.face.rightEye.setFillStyle(0x000000);
+    }
+    
+    // Update positions to follow blob
+    blob.face.leftEye.x = blob.x - 7;
+    blob.face.leftEye.y = blob.y - 5;
+    blob.face.rightEye.x = blob.x + 7;
+    blob.face.rightEye.y = blob.y - 5;
+    blob.face.mouth.x = blob.x;
+    blob.face.mouth.y = blob.y + 5;
 }
 
 function createTrophy(scene) {
@@ -71,6 +130,9 @@ function create() {
     player.body.setBounce(0.2);
     player.body.setCollideWorldBounds(true);
     player.body.setMaxVelocity(200, 500);
+    
+    // Add face to blob
+    createBlobFace(this, player);
 
     // Create a static group for platforms
     platforms = this.physics.add.staticGroup();
@@ -130,6 +192,9 @@ function create() {
 }
 
 function update() {
+    // Update blob face based on state
+    updateBlobFace(player);
+    
     // Check collision with trophy manually
     const distance = Phaser.Math.Distance.Between(player.x, player.y, trophyX, trophyY);
     if (distance < 40 && !trophyCollected) {
