@@ -23,9 +23,35 @@ let player;
 let cursors;
 let platforms;
 let canDoubleJump = true;
+let trophy;
+let colorInverted = false;
+let trophyCollected = false;
 
 function preload() {
     // Assets are created dynamically in create()
+}
+
+function createTrophy(scene) {
+    trophy = scene.add.text(250, 165, '🏆', { fontSize: '32px' });
+    trophy.setOrigin(0.5, 0.5);
+    scene.physics.add.existing(trophy);
+    trophy.body.setImmovable(true);
+    scene.physics.add.overlap(player, trophy, handleTrophyCollision, null, scene);
+}
+
+function handleTrophyCollision(scene) {
+    // Toggle color scheme
+    if (colorInverted) {
+        scene.cameras.main.setBackgroundColor(0xffffff);
+        colorInverted = false;
+    } else {
+        scene.cameras.main.setBackgroundColor(0x000000);
+        colorInverted = true;
+    }
+    
+    // Mark trophy as collected and hide it
+    trophyCollected = true;
+    trophy.setVisible(false);
 }
 
 function create() {
@@ -65,9 +91,17 @@ function create() {
     this.physics.add.existing(ground, true);
     platforms.add(ground);
 
+    // Create trophy
+    createTrophy(this);
+
     // Handle collisions with platforms and reset double-jump on ground contact
     this.physics.add.collider(player, platforms, () => {
         canDoubleJump = true;
+        // Respawn trophy when blob touches ground after collecting it
+        if (trophyCollected) {
+            trophy.setVisible(true);
+            trophyCollected = false;
+        }
     });
 
     // Setup keyboard input
