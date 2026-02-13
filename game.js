@@ -26,21 +26,24 @@ let canDoubleJump = true;
 let trophy;
 let colorInverted = false;
 let trophyCollected = false;
+let trophyX = 60;
+let trophyY = 40;
 
 function preload() {
     // Assets are created dynamically in create()
 }
 
 function createTrophy(scene) {
-    trophy = scene.add.text(60, 40, '🏆', { fontSize: '32px' });
+    trophy = scene.add.text(trophyX, trophyY, '🏆', { fontSize: '32px' });
     trophy.setOrigin(0.5, 0.5);
     trophy.setScrollFactor(0);
-    scene.physics.add.existing(trophy);
-    trophy.body.setImmovable(true);
-    scene.physics.add.overlap(player, trophy, handleTrophyCollision, null, scene);
+    trophy.setAlpha(1);
+    trophy.setDepth(100);
 }
 
 function handleTrophyCollision(scene) {
+    if (trophyCollected) return;
+    
     // Toggle color scheme
     if (colorInverted) {
         scene.cameras.main.setBackgroundColor(0xffffff);
@@ -50,9 +53,9 @@ function handleTrophyCollision(scene) {
         colorInverted = true;
     }
     
-    // Mark trophy as collected and hide it
+    // Mark trophy as collected and start hiding
     trophyCollected = true;
-    trophy.setVisible(false);
+    trophy.setAlpha(0);
 }
 
 function create() {
@@ -100,8 +103,14 @@ function create() {
         canDoubleJump = true;
         // Respawn trophy when blob touches ground after collecting it
         if (trophyCollected) {
-            trophy.setVisible(true);
             trophyCollected = false;
+            // Fade in the trophy
+            this.tweens.add({
+                targets: trophy,
+                alpha: 1,
+                duration: 300,
+                ease: 'Power1'
+            });
         }
     });
 
@@ -121,6 +130,12 @@ function create() {
 }
 
 function update() {
+    // Check collision with trophy manually
+    const distance = Phaser.Math.Distance.Between(player.x, player.y, trophyX, trophyY);
+    if (distance < 40 && !trophyCollected) {
+        handleTrophyCollision(this);
+    }
+
     // Left/right movement
     if (cursors.left.isDown) {
         player.body.setVelocityX(-160);
