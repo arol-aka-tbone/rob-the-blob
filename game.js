@@ -27,7 +27,7 @@ let trophy;
 let colorInverted = false;
 let trophyCollected = false;
 let trophyX = 60;
-let trophyY = 40;
+let trophyY = 200;
 
 function preload() {
     // Assets are created dynamically in create()
