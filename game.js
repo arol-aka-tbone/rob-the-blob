@@ -33,7 +33,6 @@ let rightEye;
 let trophyCount = 0;
 let trophyCountDisplay;
 let backgroundMusic;
-let lastTrophyCollisionTime = 0;
 
 function preload() {
     // Assets are created dynamically in create()
@@ -212,11 +211,15 @@ function update() {
     // Update blob face based on state
     updateBlobFace(player);
     
-    // Check collision with trophy manually (with cooldown to prevent rapid triggers)
-    const currentTime = Date.now();
+    // Check collision with trophy manually (blob must move 80px away to reset collision)
     const distance = Phaser.Math.Distance.Between(player.x, player.y, trophyX, trophyY);
-    if (distance < 40 && !trophyCollected && (currentTime - lastTrophyCollisionTime) > 200) {
-        lastTrophyCollisionTime = currentTime;
+    
+    if (trophyCollected && distance > 80) {
+        // Trophy collected and blob moved away - allow re-collision
+        trophyCollected = false;
+    }
+    
+    if (distance < 40 && !trophyCollected) {
         handleTrophyCollision(this);
     }
 
