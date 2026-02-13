@@ -35,6 +35,8 @@ let trophyCountDisplay;
 
 function preload() {
     // Assets are created dynamically in create()
+    // Load audio
+    this.load.audio('theme', 'rob-main-theme.mp3');
 }
 
 function createBlobFace(scene, blob) {
@@ -165,6 +167,9 @@ function create() {
     trophyCountDisplay.setOrigin(1, 0);
     trophyCountDisplay.setScrollFactor(0);
     trophyCountDisplay.setDepth(100);
+
+    // Play background music on loop
+    this.sound.play('theme', { loop: true, volume: 0.5 });
 
     // Handle collisions with platforms and reset double-jump on ground contact
     this.physics.add.collider(player, platforms, () => {
