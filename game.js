@@ -26,6 +26,7 @@ let canDoubleJump = true;
 let trophy;
 let colorInverted = false;
 let trophyCollected = false;
+let trophyJustCollected = false;
 let trophyX = 60;
 let trophyY = 200;
 let leftEye;
@@ -115,12 +116,9 @@ function handleTrophyCollision(scene) {
     const newScale = player.scale * 1.1;
     player.setScale(newScale);
     
-    // Increase audio speed by 1.1x
-    const newRate = backgroundMusic.rate * 1.1;
-    backgroundMusic.setRate(newRate);
-    
-    // Mark trophy as collected and start hiding
+    // Mark trophy as collected and flag for audio speed increase when touching ground
     trophyCollected = true;
+    trophyJustCollected = true;
     trophy.setAlpha(0);
 }
 
@@ -182,6 +180,12 @@ function create() {
         // Respawn trophy when blob touches ground after collecting it
         if (trophyCollected) {
             trophyCollected = false;
+            // Increase audio speed if trophy was just collected
+            if (trophyJustCollected) {
+                const newRate = backgroundMusic.rate * 1.1;
+                backgroundMusic.setRate(newRate);
+                trophyJustCollected = false;
+            }
             // Fade in the trophy
             this.tweens.add({
                 targets: trophy,
