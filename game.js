@@ -22,6 +22,7 @@ const game = new Phaser.Game(config);
 let player;
 let cursors;
 let platforms;
+let canDoubleJump = true;
 
 function preload() {
     // Assets are created dynamically in create()
@@ -59,14 +60,22 @@ function create() {
     this.physics.add.existing(ground, true);
     platforms.add(ground);
 
-    // Handle collisions with platforms
-    this.physics.add.collider(player, platforms);
+    // Handle collisions with platforms and reset double-jump on ground contact
+    this.physics.add.collider(player, platforms, () => {
+        canDoubleJump = true;
+    });
 
     // Setup keyboard input
     cursors = this.input.keyboard.createCursorKeys();
     this.input.keyboard.on('keydown-SPACE', () => {
         if (player.body.touching.down) {
+            // Normal jump from ground
             player.body.setVelocityY(-250);
+            canDoubleJump = true;
+        } else if (canDoubleJump) {
+            // Double jump in the air
+            player.body.setVelocityY(-250);
+            canDoubleJump = false;
         }
     });
 }
@@ -88,5 +97,10 @@ function update() {
     } else if (player.x > 780) {
         player.x = 780;
         player.body.setVelocityX(0);
+    }
+
+    // Reset double jump when touching ground (for safety)
+    if (player.body.touching.down) {
+        canDoubleJump = true;
     }
 }
