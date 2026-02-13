@@ -36,6 +36,7 @@ let trophyCount = 0;
 let trophyCountDisplay;
 let backgroundMusic;
 let gameWon = false;
+let bounceText = null;
 
 function explodeBlob(scene) {
     // Create 10 pieces that fly in different directions
@@ -175,16 +176,21 @@ function handleTrophyCollision(scene) {
     trophyCount++;
     trophyCountDisplay.setText(`Trophies: ${trophyCount}`);
     
-    // Check for win condition
+    // Check for bouncing text at trophy count 10
+    if (trophyCount === 10 && !bounceText) {
+        bounceText = scene.add.text(400, 300, 'YOU WIN', { fontSize: '48px', color: '#000000', fontStyle: 'bold' });
+        bounceText.setOrigin(0.5, 0.5);
+        scene.physics.add.existing(bounceText);
+        bounceText.body.setVelocity(200, -200);
+        bounceText.body.setBounce(1, 1);
+        bounceText.body.setCollideWorldBounds(true);
+    }
+    
+    // Check for final win condition
     if (trophyCount >= 13 && !gameWon) {
         gameWon = true;
         // Hide the trophy
         trophy.setAlpha(0);
-        // Display "YOU WIN" in lower right corner
-        const winText = scene.add.text(760, 550, 'YOU WIN', { fontSize: '32px', color: '#000000', fontStyle: 'bold' });
-        winText.setOrigin(1, 1);
-        winText.setScrollFactor(0);
-        winText.setDepth(1000);
         return;
     }
     
@@ -256,8 +262,8 @@ function create() {
     // Handle collisions with platforms and reset double-jump on ground contact
     this.physics.add.collider(player, platforms, (blob, platform) => {
         canDoubleJump = true;
-        // Break platforms if trophy count >= 7
-        if (trophyCount >= 7 && platform !== platforms.children.entries[platforms.children.entries.length - 1]) {
+        // Break platforms if trophy count >= 5
+        if (trophyCount >= 5 && platform !== platforms.children.entries[platforms.children.entries.length - 1]) {
             breakPlatform(this, platform);
         }
         // Respawn trophy when blob touches ground after collecting it
@@ -287,10 +293,10 @@ function create() {
             // Normal jump from ground
             player.body.setVelocityY(-250);
             canDoubleJump = true;
-        } else if (canDoubleJump || trophyCount >= 7) {
-            // Double jump in the air (unlimited if trophy count >= 7)
+        } else if (canDoubleJump || trophyCount >= 5) {
+            // Double jump in the air (unlimited if trophy count >= 5)
             player.body.setVelocityY(-250);
-            if (trophyCount < 7) {
+            if (trophyCount < 5) {
                 canDoubleJump = false;
             }
         }
