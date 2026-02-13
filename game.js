@@ -187,6 +187,7 @@ function create() {
                 trophyJustCollected = false;
             }
             // Fade in the trophy
+            trophy.setAlpha(0);
             this.tweens.add({
                 targets: trophy,
                 alpha: 1,
@@ -219,8 +220,10 @@ function update() {
     const distance = Phaser.Math.Distance.Between(player.x, player.y, trophyX, trophyY);
     
     if (trophyCollected && distance > 80) {
-        // Trophy collected and blob moved away - allow re-collision
+        // Trophy collected and blob moved away - allow re-collision and respawn trophy
         trophyCollected = false;
+        trophyJustCollected = false;
+        trophy.setAlpha(1);
     }
     
     if (distance < 40 && !trophyCollected) {
