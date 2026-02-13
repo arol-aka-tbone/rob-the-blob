@@ -170,12 +170,12 @@ function create() {
     trophyCountDisplay.setDepth(100);
 
     // Play background music on loop
-    backgroundMusic = this.sound.play('theme', { loop: true, volume: 0.5 });
+    backgroundMusic = this.sound.play('theme', { loop: true, volume: 1.0 });
 
-    // Setup volume slider control
+    // Setup volume slider control (0 = mute, 50 = normal, 100 = double)
     const volumeSlider = document.getElementById('volume-slider');
     volumeSlider.addEventListener('input', (e) => {
-        const volume = e.target.value / 100;
+        const volume = (e.target.value / 100) * 2;
         backgroundMusic.setVolume(volume);
     });
 
