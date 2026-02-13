@@ -22,6 +22,7 @@ const game = new Phaser.Game(config);
 let player;
 let cursors;
 let platforms;
+let platformList = [];
 let canDoubleJump = true;
 let trophy;
 let colorInverted = false;
@@ -34,6 +35,39 @@ let rightEye;
 let trophyCount = 0;
 let trophyCountDisplay;
 let backgroundMusic;
+
+function breakPlatform(scene, platform) {
+    if (!platform || platform.broken) return;
+    
+    platform.broken = true;
+    const width = platform.displayWidth;
+    const height = platform.displayHeight;
+    const x = platform.x;
+    const y = platform.y;
+    const color = platform.fillColor;
+    
+    // Create left half
+    const leftHalf = scene.add.rectangle(x - width / 4, y, width / 2, height, color);
+    scene.physics.add.existing(leftHalf);
+    leftHalf.body.setVelocityX(-150);
+    leftHalf.body.setVelocityY(-50);
+    
+    // Create right half
+    const rightHalf = scene.add.rectangle(x + width / 4, y, width / 2, height, color);
+    scene.physics.add.existing(rightHalf);
+    rightHalf.body.setVelocityX(150);
+    rightHalf.body.setVelocityY(-50);
+    
+    // Remove original platform from physics
+    platforms.remove(platform);
+    platform.destroy();
+    
+    // Remove pieces after 3 seconds
+    scene.time.delayedCall(3000, () => {
+        leftHalf.destroy();
+        rightHalf.destroy();
+    });
+}
 
 function preload() {
     // Assets are created dynamically in create()
@@ -146,16 +180,19 @@ function create() {
     const platform = this.add.rectangle(400, 500, 150, 40, 0x8b4513);
     this.physics.add.existing(platform, true);
     platforms.add(platform);
+    platformList.push(platform);
 
     // Create a second platform on the right side
     const platform2 = this.add.rectangle(650, 350, 120, 40, 0x8b4513);
     this.physics.add.existing(platform2, true);
     platforms.add(platform2);
+    platformList.push(platform2);
 
     // Create a third platform in the center (maintaining height ratio)
     const platform3 = this.add.rectangle(400, 200, 140, 40, 0x8b4513);
     this.physics.add.existing(platform3, true);
     platforms.add(platform3);
+    platformList.push(platform3);
 
     // Create ground - green bar at the bottom
     const ground = this.add.rectangle(400, 570, 800, 60, 0x00aa00);
@@ -175,8 +212,12 @@ function create() {
     backgroundMusic = this.sound.play('theme', { loop: true, volume: 1.0 });
 
     // Handle collisions with platforms and reset double-jump on ground contact
-    this.physics.add.collider(player, platforms, () => {
+    this.physics.add.collider(player, platforms, (blob, platform) => {
         canDoubleJump = true;
+        // Break platforms if trophy count >= 7
+        if (trophyCount >= 7 && platform !== platforms.children.entries[platforms.children.entries.length - 1]) {
+            breakPlatform(this, platform);
+        }
         // Respawn trophy when blob touches ground after collecting it
         if (trophyCollected) {
             trophyCollected = false;
