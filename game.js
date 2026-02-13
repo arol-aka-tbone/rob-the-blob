@@ -245,10 +245,12 @@ function create() {
             // Normal jump from ground
             player.body.setVelocityY(-250);
             canDoubleJump = true;
-        } else if (canDoubleJump) {
-            // Double jump in the air
+        } else if (canDoubleJump || trophyCount >= 7) {
+            // Double jump in the air (unlimited if trophy count >= 7)
             player.body.setVelocityY(-250);
-            canDoubleJump = false;
+            if (trophyCount < 7) {
+                canDoubleJump = false;
+            }
         }
     });
 }
