@@ -32,8 +32,9 @@ function preload() {
 }
 
 function createTrophy(scene) {
-    trophy = scene.add.text(250, 165, '🏆', { fontSize: '32px' });
+    trophy = scene.add.text(60, 40, '🏆', { fontSize: '32px' });
     trophy.setOrigin(0.5, 0.5);
+    trophy.setScrollFactor(0);
     scene.physics.add.existing(trophy);
     trophy.body.setImmovable(true);
     scene.physics.add.overlap(player, trophy, handleTrophyCollision, null, scene);
