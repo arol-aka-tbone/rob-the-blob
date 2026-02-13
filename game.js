@@ -28,6 +28,9 @@ function preload() {
 }
 
 function create() {
+    // Set white background
+    this.cameras.main.setBackgroundColor(0xffffff);
+
     // Enable world bounds collision
     this.physics.world.setBounds(0, 0, 800, 600);
 
@@ -41,20 +44,20 @@ function create() {
     // Create a static group for platforms
     platforms = this.physics.add.staticGroup();
 
-    // Create a platform block
-    const platform = platforms.create(400, 500, null);
-    platform.setDisplaySize(150, 40);
-    platform.setFillStyle(0x8b4513);
+    // Create a platform block (visible rectangle)
+    const platform = this.add.rectangle(400, 500, 150, 40, 0x8b4513);
+    this.physics.add.existing(platform, true);
+    platforms.add(platform);
 
     // Create a second platform on the right side
-    const platform2 = platforms.create(650, 350, null);
-    platform2.setDisplaySize(120, 40);
-    platform2.setFillStyle(0x8b4513);
+    const platform2 = this.add.rectangle(650, 350, 120, 40, 0x8b4513);
+    this.physics.add.existing(platform2, true);
+    platforms.add(platform2);
 
-    // Create ground
-    const ground = platforms.create(400, 570, null);
-    ground.setDisplaySize(800, 60);
-    ground.setFillStyle(0x8B7355);
+    // Create ground - green bar at the bottom
+    const ground = this.add.rectangle(400, 570, 800, 60, 0x00aa00);
+    this.physics.add.existing(ground, true);
+    platforms.add(ground);
 
     // Handle collisions with platforms
     this.physics.add.collider(player, platforms);
