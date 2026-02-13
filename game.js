@@ -30,6 +30,8 @@ let trophyX = 60;
 let trophyY = 200;
 let leftEye;
 let rightEye;
+let trophyCount = 0;
+let trophyCountDisplay;
 
 function preload() {
     // Assets are created dynamically in create()
@@ -102,6 +104,10 @@ function createTrophy(scene) {
 function handleTrophyCollision(scene) {
     if (trophyCollected) return;
     
+    // Increment trophy counter
+    trophyCount++;
+    trophyCountDisplay.setText(`Trophies: ${trophyCount}`);
+    
     // Toggle color scheme
     if (colorInverted) {
         scene.cameras.main.setBackgroundColor(0xffffff);
@@ -158,6 +164,12 @@ function create() {
 
     // Create trophy
     createTrophy(this);
+    
+    // Create trophy counter display in upper right corner
+    trophyCountDisplay = this.add.text(750, 40, `Trophies: ${trophyCount}`, { fontSize: '16px', color: '#000000' });
+    trophyCountDisplay.setOrigin(1, 0);
+    trophyCountDisplay.setScrollFactor(0);
+    trophyCountDisplay.setDepth(100);
 
     // Handle collisions with platforms and reset double-jump on ground contact
     this.physics.add.collider(player, platforms, () => {
