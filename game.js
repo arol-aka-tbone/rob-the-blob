@@ -176,13 +176,6 @@ function create() {
     // Play background music on loop
     backgroundMusic = this.sound.play('theme', { loop: true, volume: 1.0 });
 
-    // Setup volume slider control (0 = mute, 50 = normal, 100 = double)
-    const volumeSlider = document.getElementById('volume-slider');
-    volumeSlider.addEventListener('input', (e) => {
-        const volume = (e.target.value / 100) * 2;
-        backgroundMusic.setVolume(volume);
-    });
-
     // Handle collisions with platforms and reset double-jump on ground contact
     this.physics.add.collider(player, platforms, () => {
         canDoubleJump = true;
