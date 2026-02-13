@@ -108,14 +108,9 @@ function handleTrophyCollision(scene) {
     trophyCount++;
     trophyCountDisplay.setText(`Trophies: ${trophyCount}`);
     
-    // Toggle color scheme
-    if (colorInverted) {
-        scene.cameras.main.setBackgroundColor(0xffffff);
-        colorInverted = false;
-    } else {
-        scene.cameras.main.setBackgroundColor(0x000000);
-        colorInverted = true;
-    }
+    // Grow the blob by 1.1x
+    const newScale = player.scale * 1.1;
+    player.setScale(newScale);
     
     // Mark trophy as collected and start hiding
     trophyCollected = true;
