@@ -115,6 +115,10 @@ function handleTrophyCollision(scene) {
     const newScale = player.scale * 1.1;
     player.setScale(newScale);
     
+    // Increase audio speed by 1.1x
+    const newRate = backgroundMusic.rate * 1.1;
+    backgroundMusic.setRate(newRate);
+    
     // Mark trophy as collected and start hiding
     trophyCollected = true;
     trophy.setAlpha(0);
