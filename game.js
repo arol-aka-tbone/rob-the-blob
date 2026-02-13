@@ -41,22 +41,21 @@ function createBlobFace(scene, blob) {
     // Create right eye (open)
     rightEye = scene.add.circle(blob.x + 7, blob.y - 5, 3, 0x000000);
     
-    // Create closed eyes lines placeholder
-    const graphics = scene.make.graphics({ x: 0, y: 0, add: true });
-    graphics.lineStyle(2, 0x000000);
-    graphics.lineBetween(blob.x - 10, blob.y - 5, blob.x - 4, blob.y - 5);
-    graphics.lineBetween(blob.x + 4, blob.y - 5, blob.x + 10, blob.y - 5);
-    graphics.setVisible(false);
+    // Create closed eyes (slits/lines) using text
+    const closedLeftEye = scene.add.text(blob.x - 7, blob.y - 5, '–', { fontSize: '16px', color: '#000000' });
+    closedLeftEye.setOrigin(0.5, 0.5);
+    closedLeftEye.setVisible(false);
     
-    // Create smile as an arc using a simple curved line
-    const smile = scene.make.graphics({ x: 0, y: 0, add: true });
-    smile.lineStyle(2, 0x000000);
-    smile.beginPath();
-    smile.arc(blob.x, blob.y + 8, 8, Math.PI * 0.15, Math.PI * 0.85);
-    smile.strokePath();
+    const closedRightEye = scene.add.text(blob.x + 7, blob.y - 5, '–', { fontSize: '16px', color: '#000000' });
+    closedRightEye.setOrigin(0.5, 0.5);
+    closedRightEye.setVisible(false);
+    
+    // Create smile
+    const smile = scene.add.text(blob.x, blob.y + 8, '︶', { fontSize: '18px', color: '#000000' });
+    smile.setOrigin(0.5, 0.5);
     
     // Store references on blob object
-    blob.face = { leftEye, rightEye, graphics, smile };
+    blob.face = { leftEye, rightEye, closedLeftEye, closedRightEye, smile };
     blob.isJumping = false;
 }
 
@@ -69,12 +68,14 @@ function updateBlobFace(blob) {
         // Show closed eyes, hide open eyes
         blob.face.leftEye.setVisible(false);
         blob.face.rightEye.setVisible(false);
-        blob.face.graphics.setVisible(true);
+        blob.face.closedLeftEye.setVisible(true);
+        blob.face.closedRightEye.setVisible(true);
     } else {
         // Show open eyes, hide closed eyes
         blob.face.leftEye.setVisible(true);
         blob.face.rightEye.setVisible(true);
-        blob.face.graphics.setVisible(false);
+        blob.face.closedLeftEye.setVisible(false);
+        blob.face.closedRightEye.setVisible(false);
     }
     
     // Update positions to follow blob
@@ -82,10 +83,12 @@ function updateBlobFace(blob) {
     blob.face.leftEye.y = blob.y - 5;
     blob.face.rightEye.x = blob.x + 7;
     blob.face.rightEye.y = blob.y - 5;
-    blob.face.graphics.x = blob.x;
-    blob.face.graphics.y = blob.y;
+    blob.face.closedLeftEye.x = blob.x - 7;
+    blob.face.closedLeftEye.y = blob.y - 5;
+    blob.face.closedRightEye.x = blob.x + 7;
+    blob.face.closedRightEye.y = blob.y - 5;
     blob.face.smile.x = blob.x;
-    blob.face.smile.y = blob.y;
+    blob.face.smile.y = blob.y + 8;
 }
 
 function createTrophy(scene) {
