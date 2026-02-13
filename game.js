@@ -55,6 +55,11 @@ function create() {
     this.physics.add.existing(platform2, true);
     platforms.add(platform2);
 
+    // Create a third platform in the center (maintaining height ratio)
+    const platform3 = this.add.rectangle(400, 200, 140, 40, 0x8b4513);
+    this.physics.add.existing(platform3, true);
+    platforms.add(platform3);
+
     // Create ground - green bar at the bottom
     const ground = this.add.rectangle(400, 570, 800, 60, 0x00aa00);
     this.physics.add.existing(ground, true);
