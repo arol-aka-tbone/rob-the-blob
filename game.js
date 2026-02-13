@@ -35,6 +35,35 @@ let rightEye;
 let trophyCount = 0;
 let trophyCountDisplay;
 let backgroundMusic;
+let gameWon = false;
+
+function explodeBlob(scene) {
+    // Create 10 pieces that fly in different directions
+    const radius = 30;
+    for (let i = 0; i < 10; i++) {
+        const angle = (i / 10) * Math.PI * 2;
+        const vx = Math.cos(angle) * 300;
+        const vy = Math.sin(angle) * 300;
+        
+        const piece = scene.add.circle(player.x, player.y, 10, 0xff0000);
+        scene.physics.add.existing(piece);
+        piece.body.setVelocity(vx, vy);
+        piece.body.setGravityY(300);
+        
+        scene.time.delayedCall(2000, () => {
+            piece.destroy();
+        });
+    }
+    
+    // Destroy the original player blob
+    player.destroy();
+    
+    // Display win screen
+    const winText = scene.add.text(400, 300, 'YOU WIN', { fontSize: '80px', color: '#000000', fontStyle: 'bold' });
+    winText.setOrigin(0.5, 0.5);
+    winText.setScrollFactor(0);
+    winText.setDepth(1000);
+}
 
 function breakPlatform(scene, platform) {
     if (!platform || platform.broken) return;
@@ -145,6 +174,19 @@ function handleTrophyCollision(scene) {
     // Increment trophy counter
     trophyCount++;
     trophyCountDisplay.setText(`Trophies: ${trophyCount}`);
+    
+    // Check for win condition
+    if (trophyCount >= 13 && !gameWon) {
+        gameWon = true;
+        // Hide the trophy
+        trophy.setAlpha(0);
+        // Display "YOU WIN" in lower right corner
+        const winText = scene.add.text(760, 550, 'YOU WIN', { fontSize: '32px', color: '#000000', fontStyle: 'bold' });
+        winText.setOrigin(1, 1);
+        winText.setScrollFactor(0);
+        winText.setDepth(1000);
+        return;
+    }
     
     // Grow the blob by 1.2x
     const newScale = player.scale * 1.2;
