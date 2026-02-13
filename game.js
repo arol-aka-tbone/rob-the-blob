@@ -28,7 +28,7 @@ let trophy;
 let colorInverted = false;
 let trophyCollected = false;
 let trophyJustCollected = false;
-let trophyX = 60;
+let trophyX = 140;
 let trophyY = 200;
 let leftEye;
 let rightEye;
